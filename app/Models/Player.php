@@ -10,7 +10,7 @@ class Player extends Model
 {
     use SoftDeletes;
     use HasFactory;
-    
+
     protected $fillable = [
         'name',
         'height',
@@ -22,7 +22,7 @@ class Player extends Model
 
     public function team()
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Team::class, "team_id");
     }
 
     public function position()

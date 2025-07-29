@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Game extends Model
 {
+    use SoftDeletes;
+    
     protected $fillable = [
         'date',
         'time',
@@ -16,5 +19,22 @@ class Game extends Model
         'status',
         'referee_id',
     ];
+
+    // protected $appends = ["result"];
+
+    public function home_team()
+    {
+        return $this->belongsTo(Team::class, "home_team_id");
+    }
+
+    public function away_team()
+    {
+        return $this->belongsTo(Team::class, "away_team_id");
+    }
+
+    public function referee()
+    {
+        return $this->belongsTo(Referee::class, "referee_id");
+    }
 
 }

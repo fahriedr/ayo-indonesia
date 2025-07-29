@@ -19,12 +19,18 @@ class PlayerController extends Controller
         $team_id = $request->team_id ?? null;
         $position_id = $request->position_id ?? null;
 
-        $players = Player::with('team', 'position')
+        $players = Player::with([
+            'team' => function ($query) {
+                $query->select('id', 'name as team_name');
+            }, 
+            'position' => function ($query) {
+                $query->select('id', 'name as position_name');
+            }])
             ->when($keyword, function ($query, $keyword) {
                 return $query->where('name', 'like', '%' . $keyword . '%')
-                             ->orWhereHas('team', function ($q) use ($keyword) {
-                                 $q->where('name', 'like', '%' . $keyword . '%');
-                             });
+                            ->orWhereHas('team', function ($q) use ($keyword) {
+                                $q->where('name', 'like', '%' . $keyword . '%');
+                            });
             })
             ->when($team_id, function ($query, $team_id) {
                 return $query->where('team_id', $team_id);
@@ -77,7 +83,7 @@ class PlayerController extends Controller
                 return response()->json(['success' => false, 'message' => 'Jersey number already exists for this team'], 400);
             }
 
-            $data = Player::create([
+            $player = Player::create([
                 'name' => $request->name,
                 'height' => $request->height,
                 'weight' => $request->weight,
@@ -91,7 +97,7 @@ class PlayerController extends Controller
             return response()->json([
                 'success' => true, 
                 'message' => 'Player created successfully',
-                'data' => $team
+                'data' => $player
             ], 200);
             
         } catch (Exception $e) {
@@ -150,7 +156,7 @@ class PlayerController extends Controller
             DB::commit();
             return response()->json([
                 'success' => true, 
-                'message' => 'Team updated successfully',
+                'message' => 'Player updated successfully',
                 'data' => $player
             ], 200);
             
