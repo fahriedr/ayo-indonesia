@@ -5,6 +5,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args: #Use this for linux
+        USER_ID: $USER_ID #Use this for linux
+        GROUP_ID: $GROUP_ID #Use this for linux
+        USER_NAME: $USER_NAME #Use this for linux
     image: ayo-indonesia
     container_name: ayo-indonesia
     restart: unless-stopped
@@ -21,7 +25,7 @@ services:
     container_name: mysql
     restart: unless-stopped
     ports:
-      - 3306:3306
+      - 3307:3306
     environment:
       MYSQL_DATABASE: ayo_indonesia
       MYSQL_ROOT_PASSWORD: root
@@ -37,7 +41,7 @@ services:
     container_name: nginx
     restart: unless-stopped
     ports:
-      - 8080:80
+      - 8086:80
     volumes:
       - .:/var/www
       - ./docker/nginx/conf.d:/etc/nginx/conf.d

@@ -18,6 +18,25 @@ RUN apt-get update && apt-get install -y \
 # Install Composer globally
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+
+# Use this if using linux
+ARG USER_ID
+ARG GROUP_ID
+ARG USER_NAME
+ARG PW=docker
+
+ENV USER_ID=$USER_ID
+ENV GROUP_ID=$GROUP_ID
+ENV USER_NAME=$USER_NAME
+
+
+RUN useradd -m ${USER_NAME} --uid=${USER_ID} && echo "${USER_NAME}:${PW}" | \
+      chpasswd
+
+RUN usermod -aG sudo ${USER_NAME}
+
+# End of comment
+
 WORKDIR /var/www
 COPY . .
 
