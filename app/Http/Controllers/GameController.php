@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GameResource;
 use App\Models\Game;
 use App\Models\Team;
 use Exception;
@@ -13,19 +14,11 @@ class GameController extends Controller
     public function getAll(Request $request)
     {
 
-        $games = Game::with([
-            'home_team' => function($query) {
-                $query->select('id', 'name');
-            },
-            'away_team' => function($query) {
-                $query->select('id', 'name');
-            },
-            'referee' => function($query) {
-                $query->select('id', 'name');
-            },
-        ])
-        ->orderBy('date', 'desc')
-        ->paginate(10);
+        $games = Game::with(['home_team', 'away_team', 'referee'])
+            ->orderBy('date', 'desc')
+            ->paginate(10);
+
+        $games = GameResource::collection($games);
 
         return response()->json(['success' => true, 'data' => $games], 200);
     }
