@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\PlayerPositionController;
+use App\Http\Controllers\RefereeController;
 use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +41,21 @@ Route::middleware('jwt')->group(function () {
         Route::delete('/{id}', [PlayerController::class, 'delete']);
     });
     
+    Route::group(['prefix' => 'game'], function () {
+        Route::get('/', [GameController::class, 'getAll']);
+        Route::get('/{id}', [GameController::class, 'get']);
+        Route::post('/', [GameController::class, 'create']);
+        Route::put('/{id}', [GameController::class, 'update']);
+        Route::delete('/{id}', [GameController::class, 'delete']);
+    });
+
+    Route::group(['prefix' => 'referee'], function () {
+        Route::get('/', [RefereeController::class, 'getAll']);
+        Route::get('/{id}', [RefereeController::class, 'get']);
+        Route::post('/', [RefereeController::class, 'create']);
+        Route::put('/{id}', [RefereeController::class, 'update']);
+        Route::delete('/{id}', [RefereeController::class, 'delete']);
+    });
 
     Route::get('/user', [AuthController::class, 'getUser']);
     Route::put('/user', [AuthController::class, 'updateUser']);
