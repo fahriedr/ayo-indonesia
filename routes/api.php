@@ -60,10 +60,11 @@ Route::middleware('jwt')->group(function () {
 
     Route::group(['prefix' => 'goal'], function () {
         Route::get('/', [GoalController::class, 'getAll']);
-        Route::get('/{id}', [GoalController::class, 'get']);
+        Route::get('/{id}', [GoalController::class, 'get'])->where('id', '[0-9]+');
         Route::post('/', [GoalController::class, 'create']);
         Route::put('/{id}', [GoalController::class, 'update']);
         Route::delete('/{id}', [GoalController::class, 'delete']);
+        Route::get('/top_scorers', [GoalController::class, 'getTopScorers']);
     });
 
     Route::get('/user', [AuthController::class, 'getUser']);

@@ -201,4 +201,26 @@ class GoalController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+    public function getTopScorers(Request $request)
+    {
+        $top_scorers = Goal::select('player_id', DB::raw('COUNT(*) as goals_count'))
+            ->where('is_own_goal', 0)
+            ->groupBy('player_id')
+            ->orderBy('goals_count', 'desc')
+            ->take(10)
+            ->get();
+
+        $top_scorers_data = $top_scorers->map(function ($scorer) {
+            $player = Player::with(['team'])->find($scorer->player_id);
+            return [
+                'player_id' => $player->id,
+                'player_name' => $player->name,
+                'team_id' => $player->team_id,
+                'goals_count' => $scorer->goals_count,
+            ];
+        });
+
+        return response()->json(['success' => true, 'data' => $top_scorers_data], 200);
+    }
 }
