@@ -53,7 +53,7 @@ class GoalController extends Controller
             'player_id' => 'required|exists:players,id',
             'assist_player_id' => 'nullable|exists:players,id',
             'is_penalty' => 'boolean',
-            'minute' => 'required|integer|min:0|max:120',
+            'minute' => 'required|integer|min:0|max:90',
             'team_id' => 'required|exists:teams,id',
             'is_own_goal' => 'boolean',
         ]);
@@ -112,7 +112,7 @@ class GoalController extends Controller
             'player_id' => 'sometimes|exists:players,id',
             'assist_player_id' => 'nullable|exists:players,id',
             'is_penalty' => 'boolean',
-            'minute' => 'sometimes|integer|min:0|max:120',
+            'minute' => 'sometimes|integer|min:0|max:90',
             'team_id' => 'sometimes|exists:teams,id',
             'is_own_goal' => 'boolean',
         ]);
