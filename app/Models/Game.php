@@ -37,4 +37,9 @@ class Game extends Model
         return $this->belongsTo(Referee::class, "referee_id");
     }
 
+    public function goals()
+    {
+        return $this->hasMany(Goal::class, "game_id");
+    }
+
 }

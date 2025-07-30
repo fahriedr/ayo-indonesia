@@ -28,7 +28,7 @@ class TeamController extends Controller
 
     public function get(Request $request, $id)
     {
-        $team = Team::with('players')
+        $team = Team::with(['players', 'all_games'])
             ->find($id);
 
         if (!$team) {
@@ -39,16 +39,19 @@ class TeamController extends Controller
     }
 
     public function create(Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'logo' => 'required',
+            'year_founded' => 'integer',
+            'address' => 'string|max:255',
+            'city' => 'string|max:255',
+        ]);
+
+
         DB::beginTransaction();
 
         try {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'logo' => 'required',
-                'year_founded' => 'integer',
-                'address' => 'string|max:255',
-                'city' => 'string|max:255',
-            ]);
+           
 
             $imagePath = $this->uploadFile($request->logo);
 

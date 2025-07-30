@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\GameResource;
 use App\Models\Game;
+use App\Models\Referee;
 use App\Models\Team;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,7 +15,27 @@ class GameController extends Controller
     public function getAll(Request $request)
     {
 
+        $team_id = $request->team_id ?? null;
+        $start_date = $request->start_date ?? null;
+        $end_date = $request->end_date ?? null;
+        $status = $request->status ?? null;
+
         $games = Game::with(['home_team', 'away_team', 'referee'])
+            ->when($team_id, function ($query, $team_id) {
+                return $query->where(function ($q) use ($team_id) {
+                    $q->where('home_team_id', $team_id)
+                      ->orWhere('away_team_id', $team_id);
+                });
+            })
+            ->when($start_date, function ($query, $start_date) {
+                return $query->whereDate('date', '>=', $start_date);
+            })
+            ->when($end_date, function ($query, $end_date) {
+                return $query->whereDate('date', '<=', $end_date);
+            })
+            ->when($status, function ($query, $status) {
+                return $query->where('status', $status);
+            })
             ->orderBy('date', 'desc')
             ->paginate(10);
 
@@ -35,13 +56,22 @@ class GameController extends Controller
             'referee' => function($query) {
                 $query->select('id', 'name');
             },
+            'goals' => function($query) {
+            $query->select('id', 'game_id', 'player_id', 'assist_player_id', 'minute', 'is_penalty', 'is_own_goal', 'team_id')
+                ->with(['player' => function($q) {
+                    $q->select('id', 'name');
+                }, 'assistPlayer' => function($q) {
+                    $q->select('id', 'name');
+                }]);
+            }
         ])
-        ->orderBy('date', 'desc')
         ->find($id);
 
         if (!$game){
             return response()->json(['success' => false, 'message' => 'Game not found'], 404);
         }
+
+        $game = new GameResource($game);
 
         return response()->json(['success' => true, 'data' => $game], 200);
     }
@@ -67,6 +97,12 @@ class GameController extends Controller
 
         if (!$away_team) {
             return response()->json(['success' => false, 'message' => 'Away Team not found'], 404);
+        }
+
+        $referee = Referee::find($request->referee_id);
+
+        if (!$referee) {
+            return response()->json(['success' => false, 'message' => 'Referee not found'], 404);
         }
 
         DB::beginTransaction();

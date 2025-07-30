@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\GoalController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\PlayerPositionController;
 use App\Http\Controllers\RefereeController;
@@ -55,6 +56,14 @@ Route::middleware('jwt')->group(function () {
         Route::post('/', [RefereeController::class, 'create']);
         Route::put('/{id}', [RefereeController::class, 'update']);
         Route::delete('/{id}', [RefereeController::class, 'delete']);
+    });
+
+    Route::group(['prefix' => 'goal'], function () {
+        Route::get('/', [GoalController::class, 'getAll']);
+        Route::get('/{id}', [GoalController::class, 'get']);
+        Route::post('/', [GoalController::class, 'create']);
+        Route::put('/{id}', [GoalController::class, 'update']);
+        Route::delete('/{id}', [GoalController::class, 'delete']);
     });
 
     Route::get('/user', [AuthController::class, 'getUser']);

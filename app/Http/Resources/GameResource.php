@@ -33,6 +33,23 @@ class GameResource extends JsonResource
                 'id' => $this->referee->id,
                 'name' => $this->referee->name,
             ],
+            'goals' => $this->goals->map(function ($goal) {
+                return [
+                    'id' => $goal->id,
+                    'player' => [
+                        'id' => $goal->player->id,
+                        'name' => $goal->player->name,
+                    ],
+                    'assist_player' => $goal->assistPlayer ? [
+                        'id' => $goal->assistPlayer->id,
+                        'name' => $goal->assistPlayer->name,
+                    ] : null,
+                    'team_id' => $goal->team_id,
+                    'minute' => $goal->minute,
+                    'is_penalty' => $goal->is_penalty,
+                    'is_own_goal' => $goal->is_own_goal,
+                ];
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->created_at,
         ];
