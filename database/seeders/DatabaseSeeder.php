@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PlayerPositionSeeder::class,
             TeamSeeder::class,
             RefereeSeeder::class,
+            StadiumSeeder::class
         ]);
     }
 }

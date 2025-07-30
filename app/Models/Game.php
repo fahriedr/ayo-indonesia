@@ -18,9 +18,8 @@ class Game extends Model
         'away_team_score',
         'status',
         'referee_id',
+        'stadium_id',
     ];
-
-    // protected $appends = ["result"];
 
     public function home_team()
     {
@@ -40,6 +39,11 @@ class Game extends Model
     public function goals()
     {
         return $this->hasMany(Goal::class, "game_id");
+    }
+
+    public function stadium()
+    {
+        return $this->belongsTo(Stadium::class, "stadium_id");
     }
 
 }

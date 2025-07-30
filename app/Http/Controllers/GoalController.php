@@ -208,8 +208,7 @@ class GoalController extends Controller
             ->where('is_own_goal', 0)
             ->groupBy('player_id')
             ->orderBy('goals_count', 'desc')
-            ->take(10)
-            ->get();
+            ->paginate(10);
 
         $top_scorers_data = $top_scorers->map(function ($scorer) {
             $player = Player::with(['team'])->find($scorer->player_id);

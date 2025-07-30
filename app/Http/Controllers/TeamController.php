@@ -28,7 +28,7 @@ class TeamController extends Controller
 
     public function get(Request $request, $id)
     {
-        $team = Team::with(['players', 'all_games'])
+        $team = Team::with(['players', 'home_games', 'away_games'])
             ->find($id);
 
         if (!$team) {

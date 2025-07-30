@@ -59,10 +59,13 @@ class GameController extends Controller
             'goals' => function($query) {
             $query->select('id', 'game_id', 'player_id', 'assist_player_id', 'minute', 'is_penalty', 'is_own_goal', 'team_id')
                 ->with(['player' => function($q) {
-                    $q->select('id', 'name');
+                    $q->select('id', 'name', 'jersey_number');
                 }, 'assistPlayer' => function($q) {
-                    $q->select('id', 'name');
+                    $q->select('id', 'name', 'jersey_number');
                 }]);
+            },
+            'stadium' => function($query) {
+                $query->select('id', 'name');
             }
         ])
         ->find($id);
@@ -83,8 +86,9 @@ class GameController extends Controller
             'time' => 'required|date_format:H:i',
             'home_team_id' => 'required|integer',
             'away_team_id' => 'required|integer',
-            'referee_id' => 'required|integer',
+            'referee_id' => 'required|integer|exists:referees,id',
             'status' => 'required|string|in:scheduled,live,completed,canceled',
+            'stadium_id' => 'required|exists:stadiums,id'
         ]);
 
         $home_team = Team::find($request->home_team_id);
@@ -99,10 +103,8 @@ class GameController extends Controller
             return response()->json(['success' => false, 'message' => 'Away Team not found'], 404);
         }
 
-        $referee = Referee::find($request->referee_id);
-
-        if (!$referee) {
-            return response()->json(['success' => false, 'message' => 'Referee not found'], 404);
+        if ($home_team->id == $away_team->id) {
+            return response()->json(['success' => false, 'message' => 'A team cannot play against itself'], 400);
         }
 
         DB::beginTransaction();
@@ -116,7 +118,8 @@ class GameController extends Controller
                 "home_team_id" => $request->home_team_id,
                 "away_team_id" => $request->away_team_id,
                 "referee_id" => $request->referee_id,
-                "status" => $request->status
+                "status" => $request->status,
+                "stadium_id" => $request->stadium_id,
             ]);
 
             DB::commit();

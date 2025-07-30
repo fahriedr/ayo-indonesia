@@ -39,10 +39,12 @@ class GameResource extends JsonResource
                     'player' => [
                         'id' => $goal->player->id,
                         'name' => $goal->player->name,
+                        'jersey_number' => $goal->player->jersey_number,
                     ],
                     'assist_player' => $goal->assistPlayer ? [
                         'id' => $goal->assistPlayer->id,
                         'name' => $goal->assistPlayer->name,
+                        'jersey_number' => $goal->assistPlayer->jersey_number,
                     ] : null,
                     'team_id' => $goal->team_id,
                     'minute' => $goal->minute,
@@ -50,6 +52,10 @@ class GameResource extends JsonResource
                     'is_own_goal' => $goal->is_own_goal,
                 ];
             }),
+            'stadium' => [
+                'id' => $this->stadium->id,
+                'name' => $this->stadium->name,
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->created_at,
         ];

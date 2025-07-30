@@ -19,7 +19,7 @@ class Team extends Model
         'city',
     ];
 
-    protected $appends = ['logo', 'total_wins', 'total_losses', 'total_draws'];
+    protected $appends = ['logo', 'total_wins', 'total_losses', 'total_draws', 'results'];
 
     public function getLogoAttribute($value)
     {
@@ -51,21 +51,21 @@ class Team extends Model
     {
         return Game::where(function ($query) {
             $query->where('home_team_id', $this->id)
-                  ->whereColumn('home_team_score', '>', 'away_team_score');
+                ->whereColumn('home_team_score', '>', 'away_team_score');
         })->orWhere(function ($query) {
             $query->where('away_team_id', $this->id)
-                  ->whereColumn('away_team_score', '>', 'home_team_score');
+                ->whereColumn('away_team_score', '>', 'home_team_score');
         })->count();
     }
 
-     public function getTotalLossesAttribute()
+    public function getTotalLossesAttribute()
     {
         return Game::where(function ($q) {
             $q->where('home_team_id', $this->id)
-              ->whereColumn('home_team_score', '<', 'away_team_score');
+                ->whereColumn('home_team_score', '<', 'away_team_score');
         })->orWhere(function ($q) {
             $q->where('away_team_id', $this->id)
-              ->whereColumn('away_team_score', '<', 'home_team_score');
+                ->whereColumn('away_team_score', '<', 'home_team_score');
         })->count();
     }
 
@@ -82,4 +82,27 @@ class Team extends Model
         })->count();
     }
 
+    public function getResultsAttribute()
+    {
+        $games = Game::where('home_team_id', $this->id)
+            ->orWhere('away_team_id', $this->id)
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return $games->map(function ($game) {
+            $is_home = $game->home_team_id === $this->id;
+            $team_score = $is_home ? $game->home_team_score : $game->away_team_score;
+            $opponent_score = $is_home ? $game->away_team_score : $game->home_team_score;
+
+            return [
+                'game_id' => $game->id,
+                'date' => $game->date,
+                'opponent_team_id' => $is_home ? $game->away_team_id : $game->home_team_id,
+                'is_home' => $is_home,
+                'team_score' => $team_score,
+                'opponent_score' => $opponent_score,
+                'result' => $team_score > $opponent_score ? 'W' : ($team_score < $opponent_score ? 'L' : 'D')
+            ];
+        });
+    }
 }

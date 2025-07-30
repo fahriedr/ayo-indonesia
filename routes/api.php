@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\GameScheduleController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\PlayerPositionController;
@@ -19,53 +20,55 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('jwt')->group(function () {
     Route::group(['prefix' => 'team'], function () {
         Route::get('/', [TeamController::class, 'getAll']);
-        Route::get('/{id}', [TeamController::class, 'get']);
+        Route::get('/{id}', [TeamController::class, 'get'])->where('id', '[0-9]+');
         Route::post('/', [TeamController::class, 'create']);
-        Route::put('/{id}', [TeamController::class, 'update']);
-        Route::delete('/{id}', [TeamController::class, 'delete']);
+        Route::put('/{id}', [TeamController::class, 'update'])->where('id', '[0-9]+');
+        Route::delete('/{id}', [TeamController::class, 'delete'])->where('id', '[0-9]+');
     });
 
     Route::group(['prefix' => 'player_position'], function () {
         Route::get('/', [PlayerPositionController::class, 'getAll']);
         Route::post('/', [PlayerPositionController::class, 'create']);
-        Route::put('/{id}', [PlayerPositionController::class, 'update']);
-        Route::delete('/{id}', [PlayerPositionController::class, 'delete']);
+        Route::put('/{id}', [PlayerPositionController::class, 'update'])->where('id', '[0-9]+');
+        Route::delete('/{id}', [PlayerPositionController::class, 'delete'])->where('id', '[0-9]+');
 
     });
 
     Route::group(['prefix' => 'player'], function () {
 
         Route::get('/', [PlayerController::class, 'getAll']);
-        Route::get('/{id}', [PlayerController::class, 'get']);
+        Route::get('/{id}', [PlayerController::class, 'get'])->where('id', '[0-9]+');
         Route::post('/', [PlayerController::class, 'create']);
-        Route::put('/{id}', [PlayerController::class, 'update']);
-        Route::delete('/{id}', [PlayerController::class, 'delete']);
+        Route::put('/{id}', [PlayerController::class, 'update'])->where('id', '[0-9]+');
+        Route::delete('/{id}', [PlayerController::class, 'delete'])->where('id', '[0-9]+');
     });
     
     Route::group(['prefix' => 'game'], function () {
         Route::get('/', [GameController::class, 'getAll']);
-        Route::get('/{id}', [GameController::class, 'get']);
+        Route::get('/{id}', [GameController::class, 'get'])->where('id', '[0-9]+');
         Route::post('/', [GameController::class, 'create']);
-        Route::put('/{id}', [GameController::class, 'update']);
-        Route::delete('/{id}', [GameController::class, 'delete']);
+        Route::put('/{id}', [GameController::class, 'update'])->where('id', '[0-9]+');
+        Route::delete('/{id}', [GameController::class, 'delete'])->where('id', '[0-9]+');
     });
 
     Route::group(['prefix' => 'referee'], function () {
         Route::get('/', [RefereeController::class, 'getAll']);
-        Route::get('/{id}', [RefereeController::class, 'get']);
+        Route::get('/{id}', [RefereeController::class, 'get'])->where('id', '[0-9]+');
         Route::post('/', [RefereeController::class, 'create']);
-        Route::put('/{id}', [RefereeController::class, 'update']);
-        Route::delete('/{id}', [RefereeController::class, 'delete']);
+        Route::put('/{id}', [RefereeController::class, 'update'])->where('id', '[0-9]+');
+        Route::delete('/{id}', [RefereeController::class, 'delete'])->where('id', '[0-9]+');
     });
 
     Route::group(['prefix' => 'goal'], function () {
         Route::get('/', [GoalController::class, 'getAll']);
         Route::get('/{id}', [GoalController::class, 'get'])->where('id', '[0-9]+');
         Route::post('/', [GoalController::class, 'create']);
-        Route::put('/{id}', [GoalController::class, 'update']);
-        Route::delete('/{id}', [GoalController::class, 'delete']);
+        Route::put('/{id}', [GoalController::class, 'update'])->where('id', '[0-9]+');
+        Route::delete('/{id}', [GoalController::class, 'delete'])->where('id', '[0-9]+');
         Route::get('/top_scorers', [GoalController::class, 'getTopScorers']);
     });
+
+    Route::get('/game_schedule', [GameScheduleController::class, 'get']);
 
     Route::get('/user', [AuthController::class, 'getUser']);
     Route::put('/user', [AuthController::class, 'updateUser']);
