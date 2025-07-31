@@ -211,11 +211,14 @@ class GoalController extends Controller
             ->paginate(10);
 
         $top_scorers_data = $top_scorers->map(function ($scorer) {
-            $player = Player::with(['team'])->find($scorer->player_id);
+            $player = Player::with(['team', 'position'])->find($scorer->player_id);
             return [
                 'player_id' => $player->id,
                 'player_name' => $player->name,
                 'team_id' => $player->team_id,
+                'team_name' => $player->team->name,
+                'jersey_number' => $player->jersey_number,
+                'position' => $player->position->name,
                 'goals_count' => $scorer->goals_count,
             ];
         });
