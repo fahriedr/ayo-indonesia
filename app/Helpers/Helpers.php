@@ -62,9 +62,16 @@ trait Helpers {
         if ($request->assist_player_id) {
             $assist_player = Player::find($request->assist_player_id);
 
+            // Check if the assist player belongs to the game
             if ($assist_player->team_id != $game->home_team_id && $assist_player->team_id != $game->away_team_id) {
                 throw new Exception('The assist player does not belong to the team of the game', 400);
             }
+
+            //Check if the assist player belongs to the team of the player
+            if($assist_player->team_id != $player->team_id) {
+                throw new Exception('The assist player does not belong to the team of the player', 400);
+            }
+
         }
 
         // Validate the goal conditions
